@@ -519,8 +519,8 @@ content #write,
 }
 
 #write .md-alert.md-alert-important {
-  --alert-color: #765d71;
-  --alert-bg: rgba(118, 93, 113, 0.075);
+  --alert-color: #c13838;
+  --alert-bg: rgba(84, 65, 85, 0.059);
 }
 
 #write .md-alert.md-alert-warning {
@@ -641,7 +641,28 @@ content #write,
 @media screen and (min-width: 1400px) {
   content #write,
   #write,
-  #typora-source .CodeMirror-lines { max-width: 1020px; }
+  #typora-source .CodeMirror-lines { max-width: 80%; }
+}
+
+/* Load the landscape before Typora switches the export page to print media. */
+body.typora-export::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-color: var(--paper);
+  background-image:
+    url("./chunshan-shuzhai/morning-mist-birds.png"),
+    linear-gradient(rgba(247, 241, 227, 0.76), rgba(247, 241, 227, 0.76)),
+    url("./chunshan-shuzhai/mountains.png");
+  background-repeat: no-repeat;
+  background-position: center top, center, center bottom;
+  background-size: 100% auto, auto, 100% auto;
+  background-blend-mode: darken, normal, normal;
+}
+
+body.typora-export > .typora-export-content {
+  position: relative;
 }
 
 @page {
@@ -651,23 +672,10 @@ content #write,
 @media print {
   html,
   body,
-  body.typora-export,
-  .typora-export-content,
-  content {
+  body.typora-export {
     background-color: var(--paper) !important;
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
-  }
-
-  content {
-    background-image:
-      url("./chunshan-shuzhai/morning-mist-birds.png"),
-      linear-gradient(rgba(247, 241, 227, 0.76), rgba(247, 241, 227, 0.76)),
-      url("./chunshan-shuzhai/mountains.png") !important;
-    background-repeat: no-repeat !important;
-    background-position: center top, center, center bottom !important;
-    background-size: 100% auto, auto, max(100%, 1500px) auto !important;
-    background-blend-mode: darken, normal, normal !important;
   }
 
   content #write,

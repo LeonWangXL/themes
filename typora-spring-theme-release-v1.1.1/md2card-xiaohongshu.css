@@ -7,7 +7,7 @@
 :root {
   --md2card-page-background: #8863cf;
   --md2card-accent: #8863cf;
-  --md2card-link: #8863cf;
+  --md2card-link: #6743a4;
   --md2card-emphasis: color-mix(in srgb, var(--md2card-link) 72%, #111827);
   --md2card-shell: #8863cf;
   --md2card-ink: #333;
@@ -229,5 +229,5 @@
 /* Small theme-specific adaptations; editing geometry lives in base.css. */
 #write { background: #fff; box-shadow: 8px 8px 0 #ca6ce5, 10px 10px 0 #222; }
 #write::before, #write::after { content: none; }
-#write h1 { text-shadow: -1px -1px 0 #523177, 1px -1px 0 #523177, -1px 1px 0 #523177, 1px 1px 0 #523177; }
-
+#write h1 { color: #704598; text-shadow: -1px -1px 0 #523177, 1px -1px 0 #523177, -1px 1px 0 #523177, 1px 1px 0 #523177; }
+#write p a { color: #6743a4; }

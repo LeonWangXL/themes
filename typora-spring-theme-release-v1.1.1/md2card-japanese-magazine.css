@@ -269,4 +269,4 @@
 }
 
 /* Small theme-specific adaptations; editing geometry lives in base.css. */
-#write::before { width: 32px; height: 32px; transform: none; clip-path: polygon(0 0,100% 0,0 100%); }
+#write::before { width: 32px; height: 32px; transform: none; clip-path: polygon(0 0,100% 0,0 100%); } #write h2 { color: #bf0026; }

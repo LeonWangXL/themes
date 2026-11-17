@@ -314,4 +314,4 @@
 }
 
 /* Small theme-specific adaptations; editing geometry lives in base.css. */
-#write { border-top: 4px solid #1677ff; border-image: linear-gradient(90deg,#1677ff,#05d4cd,#ff4d4f) 1; } #write h2 { background: linear-gradient(135deg,#1677ff,#008d91); }
+#write { border-top: 4px solid #1677ff; border-image: linear-gradient(90deg,#1677ff,#05d4cd,#ff4d4f) 1; } #write h2 { background: linear-gradient(135deg,#1677ff,#008d91); } #write h3 { color: #1254a6; }

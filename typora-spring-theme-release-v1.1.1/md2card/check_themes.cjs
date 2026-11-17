@@ -46,12 +46,30 @@ function contrast(foreground, background) {
           const p = document.createElement('p');
           p.textContent = '长文滚动测试：文本应随着原生滚动容器移动。'.repeat(100);
           write.append(p);
+          const figure = document.createElement('figure');
+          figure.className = 'md-table-fig test-wide-table';
+          const table = document.createElement('table');
+          const row = document.createElement('tr');
+          for (let i = 0; i < 20; i++) {
+            const cell = document.createElement('td');
+            cell.textContent = `字段 ${i + 1}`;
+            row.append(cell);
+          }
+          table.append(row);
+          figure.append(table);
+          write.append(figure);
+          const source = document.createElement('div');
+          source.id = 'typora-source';
+          source.innerHTML = '<div class="CodeMirror"><span class="CodeMirror-selectedtext">selected</span><div class="CodeMirror-cursor"></div></div>';
+          document.body.append(source);
         });
         const geometry = await page.evaluate(() => {
           const content = document.querySelector('content');
           const write = document.querySelector('#write');
           const pre = document.querySelector('.CodeMirror-line');
           const style = getComputedStyle(pre);
+          const wideTable = document.querySelector('.test-wide-table');
+          wideTable.scrollLeft = 120;
           const before = write.getBoundingClientRect().top;
           content.scrollTop = 500;
           const moved = before - write.getBoundingClientRect().top;
@@ -62,7 +80,10 @@ function contrast(foreground, background) {
             extraWidth: content.scrollWidth - content.clientWidth,
             moved, prePadding: style.paddingTop, preBackground: style.backgroundColor,
             preBorder: style.borderTopWidth,
+            wideTableOverflow: wideTable.scrollWidth - wideTable.clientWidth,
+            wideTableScrollLeft: wideTable.scrollLeft,
             fontSize: getComputedStyle(write.querySelector('p')).fontSize,
+            maxWidth: getComputedStyle(write).maxWidth,
             height: write.offsetHeight,
             taskMarker: getComputedStyle(write.querySelector('.md-task-list-item'), '::before').content,
             ulMarker: getComputedStyle(write.querySelector('ol ul > li'), '::before').content,
@@ -85,16 +106,30 @@ function contrast(foreground, background) {
             alertColors: [...write.querySelectorAll('.md-alert')].map(el => getComputedStyle(el).borderLeftColor),
             alertBackgrounds: [...write.querySelectorAll('.md-alert')].map(el => getComputedStyle(el).backgroundColor),
             alertTitleColors: [...write.querySelectorAll('.md-alert-text')].map(el => getComputedStyle(el).color),
+            searchCurrent: (() => { const s = getComputedStyle(write.querySelector('.md-search-select')); return [s.color, s.backgroundColor]; })(),
+            searchOther: (() => { const s = getComputedStyle(write.querySelector('.md-search-hit:not(.md-search-select)')); return [s.color, s.backgroundColor]; })(),
+            metaColor: getComputedStyle(write.querySelector('.md-meta')).color,
+            focusBackground: getComputedStyle(write.querySelector('.md-p.md-focus')).backgroundColor,
+            sourceSelection: getComputedStyle(document.querySelector('#typora-source .CodeMirror-selectedtext')).backgroundColor,
+            sourceCursorWidth: getComputedStyle(document.querySelector('#typora-source .CodeMirror-cursor')).borderLeftWidth,
+            textSamples: Object.fromEntries(['h1', 'h2', 'h3', 'p', 'a', 'code', 'li', 'blockquote'].map(selector => {
+              const target = selector === 'p' ? write.querySelector(':scope > p:not(.md-focus)') : write.querySelector(selector);
+              const s = getComputedStyle(target);
+              return [selector, [s.color, s.backgroundColor, s.backgroundImage]];
+            })),
           };
         });
         assert.equal(geometry.position, 'absolute', file);
         assert.equal(geometry.overflow, 'auto', file);
         assert.equal(geometry.moved, 500, file);
         assert(geometry.extraWidth <= 1, `${file} ${width}: overflow ${geometry.extraWidth}`);
+        assert(geometry.wideTableOverflow > 0 && geometry.wideTableScrollLeft > 0,
+          `${file} ${width}: wide table does not scroll independently`);
         assert.equal(geometry.prePadding, '0px', file);
         assert.equal(geometry.preBorder, '0px', file);
         assert.equal(geometry.preBackground, 'rgba(0, 0, 0, 0)', file);
         assert.equal(geometry.fontSize, '16px', file);
+        assert.equal(geometry.maxWidth, '920px', `${file}: editor width changed`);
         assert(geometry.strongWeight >= 600, `${file}: weak strong text`);
         const emphasisContrast = contrast(geometry.emphasisColor, geometry.canvas);
         assert(emphasisContrast >= 4.5, `${file}: low-contrast emphasis ${emphasisContrast.toFixed(2)}`);
@@ -109,6 +144,12 @@ function contrast(foreground, background) {
         assert.deepEqual(geometry.alertTitleColors, geometry.alertColors, `${file}: alert title and border disagree`);
         const alertContrasts = geometry.alertTitleColors.map((color, index) => contrast(color, geometry.alertBackgrounds[index]));
         assert(alertContrasts.every(value => value >= 4.5), `${file}: low-contrast alert title ${Math.min(...alertContrasts).toFixed(2)}`);
+        assert(contrast(...geometry.searchCurrent) >= 4.5, `${file}: unreadable selected search hit`);
+        assert(contrast(...geometry.searchOther) >= 4.5, `${file}: unreadable search hit`);
+        assert.notEqual(geometry.metaColor, geometry.paper, `${file}: invisible Markdown marker`);
+        assert.notEqual(geometry.focusBackground, 'rgba(0, 0, 0, 0)', `${file}: missing editing focus`);
+        assert.notEqual(geometry.sourceSelection, 'rgba(0, 0, 0, 0)', `${file}: invisible source selection`);
+        assert.equal(geometry.sourceCursorWidth, '2px', `${file}: source cursor lacks visible weight`);
         assert.equal(geometry.taskMarker, 'none', file);
         assert(!geometry.ulMarker.includes('counter('), `${file}: mixed list has number`);
         assert.equal(geometry.ulMarkerPosition, 'absolute', `${file}: bullet on separate line`);
@@ -139,6 +180,15 @@ function contrast(foreground, background) {
       }
     }
     // Exercise the real relative @import as well as the combined editor fixture.
+    for (const item of report.filter(x => x.width === 1200)) {
+      const low = Object.entries(item.textSamples).filter(([selector, [color, background, image]]) => {
+        if (image !== 'none' || selector === 'code') return false;
+        const paper = item.paper === 'rgba(0, 0, 0, 0)' ? item.canvas : item.paper;
+        const surface = background.startsWith('rgba(') || background.includes(' / ') ? paper : background;
+        return contrast(color, surface) < 4.5;
+      }).map(([selector]) => selector);
+      assert.equal(low.length, 0, `${item.theme}: low-contrast text: ${low.join(', ')}`);
+    }
     for (const file of themes) {
       const url = pathToFileURL(path.join(__dirname, 'audit.html'));
       url.searchParams.set('theme', file.slice(8, -4));

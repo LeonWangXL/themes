@@ -167,4 +167,4 @@
 }
 
 /* Small theme-specific adaptations; editing geometry lives in base.css. */
-
+#write h2 { color: #646464; }

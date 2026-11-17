@@ -171,6 +171,7 @@ def build(source_path: Path, output_dir: Path) -> None:
             "warm": {"#ff7e4f": "#b84720", "#ff9d7c": "#ad492a"},
             "dreamy": {"#5e6fff": "#4857bd", "#8c9eff": "#5363b8", "#7c8dff": "#5363b8"},
             "nature": {"#4caf50": "#2d7433", "#81c784": "#39793d"},
+            "xiaohongshu": {"#8863cf": "#6743a4"},
         }.get(theme_id, {})
         for pale, readable in ink.items():
             adapted = re.sub(r"(?m)(^\s*color:\s*)" + pale + r"\b", r"\g<1>" + readable, adapted)
@@ -180,7 +181,7 @@ def build(source_path: Path, output_dir: Path) -> None:
         if theme_id == "xiaohongshu":
             shell = "#8863cf"
         extra = {
-            "bytedance": "#write { border-top: 4px solid #1677ff; border-image: linear-gradient(90deg,#1677ff,#05d4cd,#ff4d4f) 1; } #write h2 { background: linear-gradient(135deg,#1677ff,#008d91); }",
+            "bytedance": "#write { border-top: 4px solid #1677ff; border-image: linear-gradient(90deg,#1677ff,#05d4cd,#ff4d4f) 1; } #write h2 { background: linear-gradient(135deg,#1677ff,#008d91); } #write h3 { color: #1254a6; }",
             "alibaba": "#write { border-top: 4px solid #ff6a00; } #write h2 { background: linear-gradient(135deg,#cf5500,#bd6400); } #write ol > li::before { background: #b94c00; }",
             "warm": "#write ol > li::before { color: #602511; }",
             "dreamy": "#write ol > li::before { color: #202858; }",
@@ -196,12 +197,14 @@ def build(source_path: Path, output_dir: Path) -> None:
 #write ul > li { background: transparent; border: 0; box-shadow: none; }
 #write ul > li::before { display: block; content: "•"; color: #4facfe; }
 """,
+            "minimal": "#write h2 { color: #646464; }",
             "xiaohongshu": """#write { background: #fff; box-shadow: 8px 8px 0 #ca6ce5, 10px 10px 0 #222; }
 #write::before, #write::after { content: none; }
-#write h1 { text-shadow: -1px -1px 0 #523177, 1px -1px 0 #523177, -1px 1px 0 #523177, 1px 1px 0 #523177; }
+#write h1 { color: #704598; text-shadow: -1px -1px 0 #523177, 1px -1px 0 #523177, -1px 1px 0 #523177, 1px 1px 0 #523177; }
+#write p a { color: #6743a4; }
 """,
             "notebook": "#write { background-image: repeating-linear-gradient(transparent 0, transparent 27px, #edf1f4 27px, #edf1f4 28px); background-size: 100% 28px; } @media (max-width:720px) { #write::before { left: .55rem; } }",
-            "japanese-magazine": "#write::before { width: 32px; height: 32px; transform: none; clip-path: polygon(0 0,100% 0,0 100%); }",
+            "japanese-magazine": "#write::before { width: 32px; height: 32px; transform: none; clip-path: polygon(0 0,100% 0,0 100%); } #write h2 { color: #bf0026; }",
         }.get(theme_id, "")
         result = f'''/* MD2Card · {title}
  * Source: https://md2card.cn/zh/editor

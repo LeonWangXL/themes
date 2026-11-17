@@ -15,7 +15,15 @@
   --primary-color: var(--md2card-link);
   --select-text-bg-color: var(--md2card-selection);
   --select-text-font-color: var(--md2card-ink);
-  --search-select-bg-color: var(--md2card-selection);
+  --search-select-bg-color: color-mix(in srgb, var(--md2card-link) 34%, var(--md2card-panel));
+  --search-select-text-color: var(--md2card-ink);
+  --md-char-color: var(--md2card-muted);
+  --meta-content-color: var(--md2card-muted);
+  --heading-char-color: var(--md2card-muted);
+  --blur-text-color: color-mix(in srgb, var(--md2card-ink) 45%, var(--md2card-panel));
+  --focus-ring-color: var(--md2card-accent);
+  --panel-border-color: var(--md2card-border);
+  --table-border-color: var(--md2card-border);
   --rawblock-edit-panel-bd: var(--md2card-panel);
   --monospace: "Cascadia Code", Consolas, "SFMono-Regular", Menlo, monospace;
 }
@@ -159,6 +167,11 @@ body {
   accent-color: var(--md2card-accent);
   cursor: pointer;
 }
+#write#write .md-task-list-item > input:focus-visible,
+#write#write .task-list-item > input:focus-visible {
+  outline: 2px solid var(--md2card-accent);
+  outline-offset: 3px;
+}
 #write blockquote {
   margin: 1.2em 0;
   padding: .8em 1.25em;
@@ -184,6 +197,7 @@ body {
 #write hr { height: 1px; border: 0; margin: 2em 0; background: var(--md2card-border); }
 #write table { width: 100%; border-collapse: collapse; font-size: .9375rem; }
 #write th, #write td { padding: .6em .8em; border: 1px solid var(--md2card-border); }
+#write .md-table-fig th, #write .md-table-fig td { min-width: 7ch; }
 #write#write th, #write#write td { line-height: 1.55; font-size: .9375rem; }
 #write#write th p, #write#write td p { font-size: inherit; }
 #write .md-table-fig { max-width: 100%; } /* Do not clip table editing popovers. */
@@ -204,6 +218,10 @@ body {
   tab-size: 4;
 }
 #write#write .md-fences { overflow: visible; }
+#write#write .md-fences.md-focus {
+  outline: 2px solid color-mix(in srgb, var(--md2card-accent) 45%, transparent);
+  outline-offset: 2px;
+}
 #write#write .md-fences.md-fences-with-lineno { padding-left: 0; }
 #write#write .md-fences-advanced:not(.md-focus) { padding: 0; background: transparent; border: 0; }
 #write#write .md-fences.mock-cm { overflow-x: auto; }
@@ -235,7 +253,33 @@ body {
 .cm-s-inner .cm-meta, .cm-s-inner .cm-qualifier { color: var(--md2card-muted); }
 #typora-source { background: var(--md2card-panel); color: var(--md2card-ink); }
 #typora-source .CodeMirror-lines { max-width: 920px; margin: auto; padding: 2rem 1.5rem 5rem; line-height: 1.75; }
-#write .md-meta, #write .md-comment, #write .md-content { color: var(--md2card-muted); }
+#write .md-meta, #write .md-comment { color: var(--md2card-muted); }
+#write .md-p.md-focus:not(.md-search-hit) {
+  background: color-mix(in srgb, var(--md2card-link) 5%, transparent);
+  border-radius: 3px;
+}
+#write .md-search-hit:not(.md-search-select) {
+  background: color-mix(in srgb, var(--md2card-link) 22%, var(--md2card-panel));
+  color: var(--md2card-ink);
+  border-radius: 2px;
+}
+#write .md-search-select,
+#typora-source .cm-search-hit.CodeMirror-selectedtext {
+  background: var(--search-select-bg-color) !important;
+  color: var(--search-select-text-color) !important;
+  border-radius: 2px;
+  box-shadow: inset 0 -2px 0 var(--md2card-accent);
+}
+#typora-source .CodeMirror-selected,
+#typora-source .CodeMirror-selectedtext {
+  background: var(--md2card-selection) !important;
+}
+#typora-source .CodeMirror-cursor {
+  border-left: 2px solid var(--md2card-ink) !important;
+}
+#typora-source .CodeMirror-activeline-background {
+  background: color-mix(in srgb, var(--md2card-link) 6%, transparent);
+}
 #write .md-toc {
   padding: 1rem 1.2rem;
   background: color-mix(in srgb, var(--md2card-panel) 88%, transparent);
@@ -304,6 +348,9 @@ body {
 #write#write .md-alert-text-important { color: var(--md2card-important); }
 #write#write .md-alert-text-warning { color: var(--md2card-warning); }
 #write#write .md-alert-text-caution { color: var(--md2card-caution); }
+#write tbody tr:hover {
+  background-color: color-mix(in srgb, var(--md2card-link) 7%, transparent);
+}
 .md-rawblock-control, .md-rawblock-tooltip, .md-rawblock-input,
 .code-tooltip, .md-fences .code-tooltip, .autoComplt-list {
   background: var(--md2card-panel);
